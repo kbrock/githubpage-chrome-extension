@@ -1,29 +1,42 @@
-function onPageActionClicked(tab) {
-  var pageUrl, usrename, reponame;
-  var split = tab.url.split('/');
+//get these out of preferences
+var urlPatterns = {
+  "github.com" : ["http://", "3", ".github.io/", "4"],
+  "reflectivepixel.com" : ["http://github.com/kbrock/", "3"],
+  "github.io" : ["http://github.com/", "2", "/", "3"]
+};
 
-  if (split[2].match("github.com")) {
-    username = split[3];
-    reponame = split[4].split('#')[0].split('?')[0];
-    pageUrl = 'http://' + username + '.github.io/' + reponame;
-  } else if (split[2].match("reflectivepixel.com")) {
-    username = "kbrock";
-    reponame = split[3].split('#')[0].split('?')[0];
-    pageUrl = "http://github.com/"+username+"/"+reponame;
-  } else {
-    username = split[2].split(".")[0];
-    reponame = split[3].split('#')[0].split('?')[0];
-    pageUrl = "http://github.com/"+username+"/"+reponame;
+function onPageActionClicked(tab) {
+  var tabUrlParts = tab.url.split('/');
+
+  var urlPattern;
+  for(var domain in urlPatterns) {
+    if (tabUrlParts[2].match(domain)) {
+      urlPattern = urlPatterns[domain];
+      break;
+    }
   }
-  // construct the url
-  console.debug("pageUrl " + pageUrl);
-  //chrome.pageAction.getTitle({tabId: tab.id}, function(result) {
+
+  var pageUrl;
+  if (urlPattern) {
+    var pageUrlParts = urlPattern.map(function(part) {
+      if (part == 2) { // xxx.github.io
+        return tabUrlParts[part].split(".")[0];
+      } else if (isFinite(part)) { // projectname#x?x=y
+        return tabUrlParts[part].split(/[#?]/)[0];
+      } else { // hardcoded string
+        return part;
+      }
+    });
+    pageUrl = pageUrlParts.join("");
+  }
+
+  if (pageUrl) {
     chrome.tabs.create({
       index: tab.index + 1,
       url: pageUrl,
       openerTabId: tab.id
     });
-  //});
+  }
 }
 if (!chrome.pageAction.onClicked.hasListener(onPageActionClicked)) {
   chrome.pageAction.onClicked.addListener(onPageActionClicked);
@@ -37,7 +50,7 @@ chrome.runtime.onInstalled.addListener(function() {
       // That fires when a page's URL contains 'github' ...
       conditions: [
         new chrome.declarativeContent.PageStateMatcher({
-          pageUrl: { urlMatches: '(github|reflectivepixel)' },
+          pageUrl: { urlMatches: '(github.com|github.io|reflectivepixel)' },
         })
       ],
       // shows the extension's page action.

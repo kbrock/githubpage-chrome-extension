@@ -2,6 +2,7 @@
   "manifest_version": 2,
   "name": "githubpage",
   "description": "displays the github page for this repo",
+  //"update_url": "http://reflectivepixel.com/githubpage/updates.xml",
   "version": "1.0",
   "permissions": [
     "declarativeContent",
@@ -14,7 +15,6 @@
   "page_action": {
     "default_icon": "icon.png",
     "default_title": "Github Page"
-    //"default_popup": "popup.html"
   },
   "icons" : {
     "128": "icon.png"
