@@ -1,8 +1,10 @@
 //get these out of preferences
 var urlPatterns = {
+  "github.com/.*github.(com|io)" : ["http://", "3", ".github.io/"],
+  "github.io/$" : ["http://github.com/", "2", "/", "2", ".github.io"],
   "github.com" : ["http://", "3", ".github.io/", "4"],
-  "reflectivepixel.com" : ["http://github.com/kbrock/", "3"],
-  "github.io" : ["http://github.com/", "2", "/", "3"]
+  "github.io" : ["http://github.com/", "2", "/", "3"],
+  "reflectivepixel.com" : ["http://github.com/kbrock/", "3"]
 };
 
 function onPageActionClicked(tab) {
@@ -10,7 +12,7 @@ function onPageActionClicked(tab) {
 
   var urlPattern;
   for(var domain in urlPatterns) {
-    if (tabUrlParts[2].match(domain)) {
+    if (tab.url.match(domain)) {
       urlPattern = urlPatterns[domain];
       break;
     }
