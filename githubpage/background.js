@@ -1,10 +1,12 @@
 //get these out of preferences
 var urlPatterns = {
+  "gist.github.com": ["http://bl.ocks.org/", "3", "/", "4"],
   "github.com/.*github.(com|io)" : ["http://", "3", ".github.io/"],
   "github.io/$" : ["http://github.com/", "2", "/", "2", ".github.io"],
-  "github.com" : ["http://", "3", ".github.io/", "4"],
+    "github.com" : ["http://", "3", ".github.io/", "4"],
   "github.io" : ["http://github.com/", "2", "/", "3"],
-  "reflectivepixel.com" : ["http://github.com/kbrock/", "3"]
+  "reflectivepixel.com" : ["http://github.com/kbrock/", "3"],
+  "bl.ocks.org": ["http://gist.github.com/", "3", "/", "4 "],
 };
 
 function onPageActionClicked(tab) {
@@ -52,7 +54,7 @@ chrome.runtime.onInstalled.addListener(function() {
       // That fires when a page's URL contains 'github' ...
       conditions: [
         new chrome.declarativeContent.PageStateMatcher({
-          pageUrl: { urlMatches: '(github.com|github.io|reflectivepixel)' },
+          pageUrl: { urlMatches: '(github.com|github.io|reflectivepixel|bl.ocks.org)' },
         })
       ],
       // shows the extension's page action.
